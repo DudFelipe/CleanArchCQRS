@@ -1,4 +1,5 @@
-﻿using CleanArchCQRS.Domain.Abstractions;
+﻿using CleanArchCQRS.Application.Members.Commands.Validations;
+using CleanArchCQRS.Domain.Abstractions;
 using CleanArchCQRS.Infrastructure.Context;
 using CleanArchCQRS.Infrastructure.Repositories;
 using FluentValidation;
@@ -39,7 +40,10 @@ namespace CleanArchCQRS.CrossCutting.AppDependencies
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             var myHandlers = AppDomain.CurrentDomain.Load("CleanArchCQRS.Application");
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(myHandlers));
+            services.AddMediatR(cfg => {
+                cfg.RegisterServicesFromAssemblies(myHandlers);
+                cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+            });
 
             services.AddValidatorsFromAssembly(Assembly.Load("CleanArchCQRS.Application"));
 
